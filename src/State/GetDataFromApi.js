@@ -46,8 +46,10 @@ export default function GetDataFromApi() {
         //getting data from db.json file 
         axios.get("/db/db.json")
             .then(res => {
-                setState(res.data)
-                setLoading(false)
+                if (res.data) {
+                    setState(res.data)
+                    setLoading(false)
+                }
                 let data = res.data.orders
                 if (data) {
                     let unordered_group = totalPriceAndCountObj(data)

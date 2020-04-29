@@ -53,12 +53,14 @@ export default function Chart({ type, title }) {
 
     if (type === "Bar")
         return (<Bar
+            data-testId="Bar"
             data={showChartData}
             width={100}
             height={50}
         />
         )
     return <Line
+        data-testId="Line"
         data={showChartData}
         width={100}
         height={50}
