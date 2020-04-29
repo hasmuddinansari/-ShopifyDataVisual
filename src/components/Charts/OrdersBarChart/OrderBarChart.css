@@ -1,0 +1,4 @@
+.row p {
+    transform: rotate(270deg);
+    font-size: large;
+}

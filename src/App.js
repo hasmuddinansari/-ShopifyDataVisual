@@ -1,12 +1,15 @@
 import React from 'react';
 import './App.css';
-import OrderCountBar from "./components/OrderCountBar/OrderCountBar"
+import OrderBarChart from "./components/Charts/OrdersBarChart/OrderBarChart"
+import PriceLineChart from "./components/Charts/PriceLineChart/PriceLineChart"
+
 
 function App() {
 
   return (
     <div className="App">
-      <OrderCountBar />
+      <OrderBarChart />
+      <PriceLineChart />
     </div>
   );
 }

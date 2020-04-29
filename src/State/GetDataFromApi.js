@@ -1,33 +1,63 @@
-import { useState, useEffect, memo } from "react"
+import { useState, useEffect } from "react"
 import axios from "axios"
 
-export default function OrderData() {
+export default function GetDataFromApi() {
     const [loading, setLoading] = useState(false)
     const [state, setState] = useState([])
     const [groupedDateState, setGroup] = useState({})
+
+    function makeArrSum(arr) {
+        if (arr.length == 0) {
+            return 0
+        }
+        if (arr.length == 1) {
+            return Number(arr[0])
+        }
+        else return arr.reduce((a, b) => Number(a) + Number(b))
+    }
+
+    function sortByKey(ob) {
+        let sortedOb = {}
+        Object.keys(ob).sort().forEach((e) => {
+            sortedOb[Number(e)] =
+                [makeArrSum(ob[e]),
+                ob[e].length]
+            // "key : [totalPrice, totalCount]"
+        })
+        return sortedOb
+    }
+
+    function totalPriceAndCountObj(data) {
+        let ob = {}
+        for (let i = 0; i < data.length; i++) {
+            let date = data[i].created.split("T")[0]
+            // date="2020/04/13T12:01:12">> getting >> 2020/04/13
+            let key = date.slice(date.length - 2)
+            //key = last 2 digit date >> 13
+            if (key in ob) ob[key] =
+                [...ob[key], data[i].price]
+            else ob[key] = []
+        }
+        return ob
+    }
+
     useEffect(() => {
         setLoading(true)
+        //getting data from db.json file 
         axios.get("/db/db.json")
             .then(res => {
                 setState(res.data)
                 setLoading(false)
                 let data = res.data.orders
                 if (data) {
-                    let groupedState = {}
-                    for (let i = 0; i < data.length; i++) {
-                        let date = data[i].created.split("T")[0]
-                        // date="2020/04/13T12:01:12">> getting >> 2020/04/13
-                        let key = date.slice(date.length - 2)
-                        //key = last 2 digit date >> 13
-                        if (key in groupedState) groupedState[key] =
-                            [...groupedState[key], data[i].price]
-                        else groupedState[key] = []
-                    }
-                    setGroup(groupedState)
+                    let unordered_group = totalPriceAndCountObj(data)
+                    //sorting by key
+                    let groupState = sortByKey(unordered_group)
+                    setGroup(groupState)
                 }
             })
-            .catch(() => {
-                console.log("something wrent wrong !!!")
+            .catch((e) => {
+                console.log("something wrent wrong !!!", e)
             })
     }, [])
 
